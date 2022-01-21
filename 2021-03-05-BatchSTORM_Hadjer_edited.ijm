@@ -1,7 +1,7 @@
 // This macro batch-analyzes PALM data
 
 
-macro "Batch Process STORM data " { convert("Raw Data"); }
+
 
  
 function convert(format) {
