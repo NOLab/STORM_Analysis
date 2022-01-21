@@ -1,12 +1,9 @@
 macro "Batch FRC" {
 
-	// Save Settings
-	saveSettings();
 
 
 
-	
-// Titles of the Thunderstorm windows for catching them
+
   Dialog.create("Test");
   Dialog.addString("Directory:", "C:\_data\_storm data");
   Dialog.addCheckbox("split images ", true);
@@ -16,7 +13,7 @@ Dialog.addNumber("End",0);
  Dialog.show();
   directory = Dialog.getString();
  doSplit= Dialog.getCheckbox();
-Windows_size = Dialog.getNumber();
+Window_size = Dialog.getNumber();
 Begin = Dialog.getNumber();
 End=  Dialog.getNumber();
 
@@ -60,11 +57,26 @@ dir2 = dir1;
 		rename("tmp");
 		  if (doSplit==true) {
 		run("Split image sequence into odd and even frames");
-		saveAs("TIF", dir1+name+".tif - Even Frames.tif", dir1+name+".tif - Odd Frames.tif");
+		rename("image");
+		run("Deinterleave", "how=2");
+		selectWindow("image #1");
+		saveAs("TIF", dir1+name+"Even Frames.tif");
+		selectWindow("image #2");
+		saveAs("TIF", dir1+name+"Odd Frames.tif");
 		close();
 		close();
 		  }
 		}
         }
+    run("Fast Temporal Median", "Select Files = ["dir1+name+"Even Frames.tif, "+ dir1+name+"Odd Frames.tif] Window size = " + Windows_size + "Begin " + Begin + "End" + End)
+	rename("image");
+		run("Deinterleave", "how=2");
+		selectWindow("image #1");
+		saveAs("TIF", dir1+name+"Even Frames_corrected.tif");
+		selectWindow("image #2");
+		saveAs("TIF", dir1+name+"Odd Frames_corrected.tif");
+		close();
+		close();
     }
+	
 }
