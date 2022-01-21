@@ -68,15 +68,15 @@ dir2 = dir1;
 		  }
 		}
         }
-    run("Fast Temporal Median", "Select Files = ["dir1+name+"Even Frames.tif, "+ dir1+name+"Odd Frames.tif] Window size = " + Windows_size + "Begin " + Begin + "End" + End)
-	rename("image");
-		run("Deinterleave", "how=2");
-		selectWindow("image #1");
-		saveAs("TIF", dir1+name+"Even Frames_corrected.tif");
-		selectWindow("image #2");
-		saveAs("TIF", dir1+name+"Odd Frames_corrected.tif");
-		close();
-		close();
+//    run("Fast Temporal Median", "Select Files = ["dir1+name+"Even Frames.tif, "+ dir1+name+"Odd Frames.tif] Window size = " + Windows_size + "Begin " + Begin + "End" + End)
+//	rename("image");
+//		run("Deinterleave", "how=2");
+//		selectWindow("image #1");
+//		saveAs("TIF", dir1+name+"Even Frames_corrected.tif");
+//		selectWindow("image #2");
+//		saveAs("TIF", dir1+name+"Odd Frames_corrected.tif");
+//		close();
+//		close();
     }
 	
 }
