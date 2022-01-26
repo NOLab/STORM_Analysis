@@ -2,6 +2,7 @@
 
 
 
+macro "Batch Process STORM data " { convert("Raw Data"); }
 
  
 function convert(format) {
@@ -30,7 +31,7 @@ RECON_TITLE = "Averaged shifted histograms";
   Dialog.addCheckbox("DoM ", true);
   Dialog.addCheckbox("ThunderSTORM (Phasor)", false);
   Dialog.addCheckbox("ThunderSTORM (Gaussia)", false);
-  Dialog.addCheckbox("Split frames odd/even", true);
+  Dialog.addCheckbox("Split frames odd/even", false);
   Dialog.addMessage("Camera Options \n") ;
 Dialog.addNumber("Pixel Size", 130);
 Dialog.addNumber("ADU", 0.21);
@@ -90,10 +91,11 @@ dir2 = dir1;
     setBatchMode(true);
     for (i=0; i<list.length; i++) {
         showProgress(i+1, list.length);
-	if (!endsWith(list[i], '.tif'))
+	if (!endsWith(list[i], '.tif')){
         print("Not TIF: "+dir1+list[i]);
+        }
         else {
-        	open(dir1+list[i]);
+        open(dir1+list[i]);
 		name= list[i];
 		index = lastIndexOf(name, "."); 
        	 	name = substring(name, 0, index);
@@ -102,21 +104,59 @@ dir2 = dir1;
 		{
 		rename("tmp");
 		run("Add...", "value = 400");
-			if (doSplit==true) {
+		
+		if (doSplit==true) {
+		dir_even = dir1+"/Even/";
+		File.makeDirectory(dir_even);
+		dir_odd = dir1+"/Odd/";
+		File.makeDirectory(dir_odd);
 		run("Split image sequence into odd and even frames");
 		rename("image");
 		run("Deinterleave", "how=2");
 		selectWindow("image #1");
-		saveAs("TIF", dir1+name+"Even Frames.tif");
+		saveAs("TIF", dir_odd+name+"/Odd.tif");
+		if (doDoM==true) {
+		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
+		//if (numstack>4000)
+		//{
+		//run("Drift Correction", "pixel=20 batch=2000 method=[Direct CC first batch and all others] apply");
+		//}
+		w=getWidth();
+		h=getHeight();
+		run("Reconstruct Image", "for=[Only true positives] pixel="+SRPIXEL+" width="+w+" height="+h+" sd=[Constant value] value=10 cut=25 x_offset=0 y_offset=0 range=1-99999 render=Z-stack z-distance=100 lut=Fire");
+		selectWindow("Reconstructed Image");
+		saveAs("Tiff", dir_odd+name+"_DOM.tif");
+		saveAs("Results",dir_odd+name+"_DOM.xls");
+		close();
+		}
 		rename("tmp");
 		selectWindow("image #2");
-		saveAs("TIF", dir1+name+"Odd Frames.tif");
+		saveAs("TIF", dir_even+name+"/Even.tif");
+		if (doDoM==true) {
+		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
+		//if (numstack>4000)
+		//{
+		//run("Drift Correction", "pixel=20 batch=2000 method=[Direct CC first batch and all others] apply");
+		//}
+		w=getWidth();
+		h=getHeight();
+		run("Reconstruct Image", "for=[Only true positives] pixel="+SRPIXEL+" width="+w+" height="+h+" sd=[Constant value] value=10 cut=25 x_offset=0 y_offset=0 range=1-99999 render=Z-stack z-distance=100 lut=Fire");
+		selectWindow("Reconstructed Image");
+		saveAs("Tiff", dir_even+name+"_DOM.tif");
+		saveAs("Results",dir_even+name+"_DOM.xls");
+		close();
+		}
 		rename("tmp");
 		//run("FRC Calculation... ", "Image 1 = "+dir1+name+"Even Frames.tif Image 2 = "+dir1+name+"Odd Frames.tif");
 		close();
 		close();
+		//DOM pour odd et even
+		
 			}
 		selectWindow("tmp");
+		
+		
+		
 		  if (doSTD==true) {
 		run("Z Project...", "projection=[Standard Deviation]");
 		run("Scale...", "x=2 y=2 interpolation=Bilinear create");
@@ -128,6 +168,8 @@ dir2 = dir1;
 		w=getWidth();
 		h=getHeight();
 		//print(w);
+
+		
 		if (doDoM==true) {
 		
 		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
@@ -220,8 +262,9 @@ dir2 = dir1;
 		close();
   	  }
 	}
-
-
 }
+
+
+
 
 
