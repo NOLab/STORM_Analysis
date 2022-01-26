@@ -31,7 +31,7 @@ RECON_TITLE = "Averaged shifted histograms";
   Dialog.addCheckbox("DoM ", true);
   Dialog.addCheckbox("ThunderSTORM (Phasor)", false);
   Dialog.addCheckbox("ThunderSTORM (Gaussia)", false);
-  Dialog.addCheckbox("Split frames odd/even", false);
+  Dialog.addCheckbox("Split frames odd/even", true);
   Dialog.addMessage("Camera Options \n") ;
 Dialog.addNumber("Pixel Size", 130);
 Dialog.addNumber("ADU", 0.21);
@@ -114,7 +114,7 @@ dir2 = dir1;
 		rename("image");
 		run("Deinterleave", "how=2");
 		selectWindow("image #1");
-		saveAs("TIF", dir_odd+name+"/Odd.tif");
+		saveAs("TIF", dir_odd+name+"\Odd.tif");
 		if (doDoM==true) {
 		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
 		//if (numstack>4000)
@@ -128,10 +128,10 @@ dir2 = dir1;
 		saveAs("Tiff", dir_odd+name+"_DOM.tif");
 		saveAs("Results",dir_odd+name+"_DOM.xls");
 		close();
-		}
+		};
 		rename("tmp");
 		selectWindow("image #2");
-		saveAs("TIF", dir_even+name+"/Even.tif");
+		saveAs("TIF", dir_even+name+"\Even.tif");
 		if (doDoM==true) {
 		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
 		//if (numstack>4000)
@@ -145,13 +145,12 @@ dir2 = dir1;
 		saveAs("Tiff", dir_even+name+"_DOM.tif");
 		saveAs("Results",dir_even+name+"_DOM.xls");
 		close();
-		}
+		};
 		rename("tmp");
 		//run("FRC Calculation... ", "Image 1 = "+dir1+name+"Even Frames.tif Image 2 = "+dir1+name+"Odd Frames.tif");
 		close();
 		close();
 		//DOM pour odd et even
-		
 			}
 		selectWindow("tmp");
 		
