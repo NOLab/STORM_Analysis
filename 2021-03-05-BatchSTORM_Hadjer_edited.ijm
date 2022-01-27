@@ -114,7 +114,7 @@ dir2 = dir1;
 		rename("image");
 		run("Deinterleave", "how=2");
 		selectWindow("image #1");
-		saveAs("TIF", dir_odd+name+"\Odd.tif");
+		saveAs("TIF", dir_odd+name+"\.tif");
 		if (doDoM==true) {
 		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
 		//if (numstack>4000)
@@ -131,7 +131,7 @@ dir2 = dir1;
 		};
 		rename("tmp");
 		selectWindow("image #2");
-		saveAs("TIF", dir_even+name+"\Even.tif");
+		saveAs("TIF", dir_even+name+"\.tif");
 		if (doDoM==true) {
 		run("Detect Molecules", "task=[Detect molecules and fit] psf="+sigma+ " intensity=4 pixel="+PIXEL_SIZE+" parallel=1000 fitting=5 ignore");
 		//if (numstack>4000)
@@ -151,12 +151,20 @@ dir2 = dir1;
 		close();
 		close();
 		//DOM pour odd et even
+		run("FRC Calculation...", "Image 1="+dir_even+name+"_DOM.tif" + " Image 2="+dir_odd+name+ "_DOM.tif"+ " Resolution Criteria = [Three sigma]"  +" Display_plot= true");
+		selectWindow("FRC Results");
+		saveAs("Results", dir1+name+"_FRC_DOM.xls");
+		close();
+		run("FRC Calculation...", "Image 1="+dir_even+name+"\.tif" + " Image 2="+dir_odd+name+ "\.tif"+ " Resolution Criteria = [Three sigma]"  +" Display_plot= true");
+		selectWindow("FRC Results");
+		saveAs("Results", dir1+name+"_FRC.xls");
+		close();
 			}
 		selectWindow("tmp");
 		
 		
 		
-		  if (doSTD==true) {
+		if (doSTD==true) {
 		run("Z Project...", "projection=[Standard Deviation]");
 		run("Scale...", "x=2 y=2 interpolation=Bilinear create");
 		saveAs("PNG", dir1+name+"_std.png");
